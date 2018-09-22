@@ -1,0 +1,14 @@
+bin
+===
+
+This repository contains small utilities & documentation.
+
+Installation
+------------
+
+	make
+
+and for uninstalling
+
+	make uninstall
+

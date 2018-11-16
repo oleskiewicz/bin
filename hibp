@@ -1,0 +1,33 @@
+#!/bin/sh
+
+if [ -z "$1" ]; then
+	echo "usage: hibp \$password"
+	exit 1
+fi
+
+_pwdhash=$(
+	printf "%s" "$1" |
+	shasum -a 1 |
+	cut -f1 -d' ' |
+	tr '[:lower:]' '[:upper:]'
+)
+
+_pwdrange=$(
+	curl -s "https://api.pwnedpasswords.com/range/$(
+		echo "${_pwdhash}" |
+		cut -c -5
+	)"
+)
+
+_pwdcheck=$(
+	echo "${_pwdrange}" |
+	grep "$(echo "${_pwdhash}" | cut -c 6-)" |
+	head -1
+)
+
+if [ -n "${_pwdcheck}" ]; then
+	echo "${_pwdcheck}" | cut -f2 -d':'
+	exit 1
+else
+	exit 0
+fi

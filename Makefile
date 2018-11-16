@@ -1,5 +1,5 @@
 PREFIX?=/usr/local
-BIN=$(shell find . -type f -perm 755)
+BIN=$(shell find . -type f -perm 755 -not -path '*/\.*')
 MAN=$(BIN:=.1)
 
 install:

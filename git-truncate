@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+NEW_START="$1"
+
+git checkout --orphan temp "${NEW_START}"     # create a new branch without parent history
+git commit -m "Truncated history"             # create a first commit on this branch
+git rebase --onto temp "${NEW_START}" master  # now rebase the part of master branch that we want to keep onto this branch
+git branch -D temp                            # delete the temp branch
+
+git prune --progress                          # delete all the objects w/o references
+git gc --aggressive                           # aggressively collect garbage; may take a lot of time on large repos

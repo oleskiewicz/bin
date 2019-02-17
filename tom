@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# tom - pomodoro timer
+
+w=62
+
+function print_help {
+	echo "$1"
+	echo "usage: ./tom.sh time1 [time2 ... timeN]"
+}
+
+function notify {
+	# terminal-notifier -message "$1" -activate com.apple.Terminal -sound default
+	# notify-send "$1"
+	printf "\n$1\n"
+}
+
+function to_seconds {
+	echo $((60*$1))
+}
+
+function print_time {
+	printf '%02d:%02d' $(($1%3600/60)) $(($1%60))
+}
+
+function timer_loop {
+	tt=$(print_time $(to_seconds $t))
+	for n in $(seq 1 $1); do
+		ff=$(($w*$n/$1))
+		uf=$(($w-$ff))
+		t=$(print_time $n)
+		bar=$(printf "[%${ff}s>" | tr " " "=" ; printf "%${uf}s]" | tr " " "-")
+		echo -ne "$bar $t / $tt \033[0K\r"
+		sleep 1
+	done
+	notify "$t"
+	read -s -n 1
+}
+
+if [[ $# -eq 0 ]]; then
+	print_help "tom: no arguments provided"
+	exit 1
+fi
+for t in $@; do
+	if [[ -n ${t//[0-9]/} ]] || [[ "$t" -eq "0" ]]; then
+		print_help "tom: arguments must be integers larger than zero"
+		exit 1
+	fi
+done
+
+while true; do
+	for t in $@; do
+		timer_loop $(to_seconds "$t")
+	done
+done
+

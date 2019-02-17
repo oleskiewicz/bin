@@ -1,0 +1,7 @@
+#!/bin/sh -e
+# sf - swap files
+
+TMP=$(mktemp)
+mv "$1" "${TMP}"
+mv "$2" "$1"
+mv "${TMP}" "$2"

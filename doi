@@ -1,0 +1,16 @@
+#!/bin/sh -e
+#
+# doi - extract doi from a PDF
+# requires poppler
+
+[ -z "$1" ] && echo "Give a pdf file as an argument." && exit 1
+
+getdoi() {
+	grep -io 'doi:.*' | sed -e 's/[\t ].*$//'
+}
+
+doi=$(pdfinfo "$1" | getdoi)
+[ -z "$doi" ] && doi=$(pdftotext "$1" 2>/dev/null - | getdoi)
+[ -z "$doi" ] && exit 1
+
+echo "$doi"

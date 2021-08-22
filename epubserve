@@ -1,0 +1,18 @@
+#!/bin/sh -e
+#
+# epubserve -- mounts ePub files as FUSE and serves them locally over HTTP
+
+MNT_POINT="$HOME/mnt/ebook"
+PORT=8000
+
+unmount() { umount "$MNT_POINT" 2> /dev/null || true; }
+mount() { archivemount "$1" "$MNT_POINT" -o readonly; }
+serve() { python -m http.server -d "$MNT_POINT" "$PORT" 2>/dev/null 1>&2; }
+
+unmount
+mount "$1"
+trap unmount EXIT
+
+echo "http://0.0.0.0:$PORT/OEBPS/"
+qrencode -tutf8 "http://$(ipconfig getifaddr en0):$PORT/OEBPS/"
+serve

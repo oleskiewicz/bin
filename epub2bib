@@ -1,0 +1,20 @@
+#!/bin/sh -e
+#
+# epub2bib -- extract epub metadata into bibtex
+
+[ "$#" -ne 1 ] && ( echo "no arg provided"; exit 1; )
+
+data="$(exiftool -j "$1" | jq -r '.[0]')"
+key="$(echo "$data" | jq -r '.Title' | cut -d: -f1 | tr -cd '[:alnum:]')"
+
+echo "@book{$key,"
+echo "$data" |
+	jq -r '. | {Title, Creator, Publisher, Date, Language} |
+    [
+	"\ttitle = {" + .Title + "},",
+	"\tauthor = {" + (.Creator | if type == "array" then .[0] else . end) + "},",
+	"\tyear = {" + (.Date | (if type == "array" then .[0] else . end) | tostring) + "},",
+	"\tlanguage = {" + (.Language | (if type == "array" then .[0] else . end)) + "},",
+	"\tpublisher = {" + (.Publisher | (if type == "array" then .[0] else . end)) + "},"
+	] | join("\n")'
+echo "}"

@@ -1,0 +1,20 @@
+#!/bin/sh -e
+#
+# epubmove -- move epub to a correct location
+
+[ "$#" -eq 1 ] || ( echo "no arg provided"; exit 1; )
+[ -f "$1" ] || ( echo "not a file"; exit 1; )
+
+data="$(exiftool -j "$1" | jq -r '.[0]')"
+
+author="$(echo "$data" | jq -r '.Creator | if type == "array" then .[0] else . end' | cut -d, -f1 | tr -d '.')"
+title="$(echo "$data" | jq -r '.Title' | cut -d: -f1)"
+
+filename="$HOME/usr/bib/${author}/${title}.epub"
+
+[ "$PWD/$1" = "$filename" ] || (
+	echo "$PWD/$1 > $filename";
+	mkdir -p "$(dirname "$filename")";
+	mv "$1" "$filename";
+	exit 1;
+)

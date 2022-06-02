@@ -1,0 +1,15 @@
+#!/bin/sh -e
+#
+# browser -- open browser from a stdin or argv[1]
+
+if [ -t 0 ]
+then
+  if [ -n "$1" ]
+  then
+    open "$1"
+  fi
+else
+  f="$(mktemp).html"
+  cat > "$f"
+  open "$f"
+fi

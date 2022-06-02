@@ -1,0 +1,23 @@
+.SH 1
+tpl
+.LP
+Implementation of the 
+.pdfhref W -A "." -D http://werc.cat-v.org/docs/rc-template-lang Rc Tempalte Lang
+.SH 2
+Requirements
+.sp 1.0v
+.RS
+.ti -\w'\(bu  'u
+\(bu  Awk (mawk preferred for speed)
+.RE
+.RS
+.ti -\w'\(bu  'u
+\(bu  any shell with \f[CR]-n\f[R] option in \f[CR]echo\f[R]
+.RE
+.SH 2
+Usage
+.LD
+.ft CR
+tpl file.txt.tpl | bash > file.txt
+.ft
+.DE

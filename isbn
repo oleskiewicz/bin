@@ -1,0 +1,4 @@
+#!/bin/sh -e
+#
+# isbn -- get metadata from isbn
+curl -fSsL "https://openlibrary.org/api/books?bibkeys=ISBN:${1}&format=json&jscmd=data" | jq | less

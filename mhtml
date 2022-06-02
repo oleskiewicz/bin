@@ -1,0 +1,13 @@
+#!/bin/sh -e
+#
+# mhtml: open HTML email in a browser
+
+msg="${1:-$(mseq)}"
+tf=$(mktemp '/tmp/mhtml.XXXXXX')
+mv "$tf" "$tf.html"
+tf="$tf.html"
+hp=$(mshow -t "${msg}" | grep 'text/html' | cut -d ':' -f 1 | xargs)
+mshow -O "${msg}" "${hp}" | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | sed '/^$/d' > "${tf}"
+"${BROWSER:-browser}" "${tf}"
+sleep 1
+rm "${tf}"

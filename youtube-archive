@@ -1,0 +1,16 @@
+#!/bin/sh -e
+#
+# youtube-archive -- archives latest n (default 5) videos from a channel
+
+UPLOADER="$1"
+URL="https://youtube.com/user/$UPLOADER"
+NUM="${2:-5}"
+
+mkdir -p "$HOME/.cache/youtube/$UPLOADER" &&
+youtube-dl \
+	--download-archive "$HOME/.cache/youtube/$UPLOADER/archive.txt" \
+	--no-overwrites --no-post-overwrites --continue --ignore-errors --geo-bypass \
+	--playlist-end "$NUM" \
+	--write-auto-sub --embed-subs \
+	-o "$HOME/.cache/youtube/$UPLOADER/%(upload_date)s_%(title)s.%(ext)s" \
+	"$URL"

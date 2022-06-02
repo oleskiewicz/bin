@@ -1,0 +1,26 @@
+#!/usr/bin/awk -f
+#
+# cmt - use with cmtrc(5) file to comment out lines in vi(1)
+#     add to .exrc:
+#     map gc !}cmt -v EXT="^${$(echo %)\#\#*.} " -v CMTRC="$XDG_CONFIG_HOME/cmt/cmtrc"
+
+# load comment prefixes & suffixes
+BEGIN {
+	OFS=""
+	while((getline line < CMTRC) > 0 ) {
+		if(line ~ EXT) {
+			split(line, fields, " ")
+		}
+	}
+	CMT=("^" fields[2] " ")
+}
+
+# remove comment
+$0 ~ CMT {
+  printf "%s\n", substr($0, length(fields[2])+2)
+}
+
+# insert comment
+$0 !~ CMT {
+	printf "%s %s%s\n", fields[2], $0, fields[3]
+}

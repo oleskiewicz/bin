@@ -1,0 +1,4 @@
+#!/bin/sh
+
+make -B
+( git ls-files 2>/dev/null || find . -type f ! -name '.*' -print ) | entr -prs 'make'

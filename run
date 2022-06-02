@@ -1,0 +1,25 @@
+#!/bin/sh -e
+#
+# run -- run file based on extension
+
+file="$1"
+dir=${file%/*}
+base="${file%.*}"
+ext="${file##*.}"
+
+cd "$dir" || exit 1
+
+case "$ext" in
+	[0-9]) refer -PS -e | groff -mandoc -T pdf > "$base".pdf ;;
+	c) cc "$file" -o "$base" && "$base" ;;
+	d) rdmd "$file" ;;
+	go) go run "$file" ;;
+	md) pandoc "$file" --pdf-engine=tectonic -o "$base".pdf ;;
+	ms) refer -PS -e | groff -me -ms -kept -T pdf > "$base".pdf ;;
+	py) python "$file" ;;
+	[rR]md) Rscript -e "rmarkdown::render('$file', 'all', quiet=TRUE)" ;;
+	rs) cargo run ;;
+	sent) setsid -f sent "$file" 2>/dev/null ;;
+	tex) tectonic "$file" ;;
+	*) head -n1 "$file" | grep '^#!/' | sed 's/^#!//' | xargs -I % "$file" ;;
+esac

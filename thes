@@ -1,0 +1,14 @@
+#!/bin/sh -e
+#
+# thes: thesaurus
+
+THESAURUS=${THESAURUS:-"$HOME/.local/share/thesaurus/en_GB.txt"}
+
+if [ -n "$1" ]
+then
+	WORD="$1"
+else
+	WORD=$(cat -)
+fi
+
+grep "^${WORD}," "$THESAURUS" | tr ',' '\n' | sort -u

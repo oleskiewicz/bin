@@ -1,0 +1,25 @@
+#!/bin/sh -e
+#
+# protonmutt
+
+if ! [ $# -ge 3 ]
+then
+	echo "USAGE: protonmutt <PROTONMAIL_USERNAME> <MUTT_REALNAME> <MUTT_FROM>"
+	exit 1
+fi
+
+set -o xtrace
+bridge_out=$(hydroxide auth ${1})
+bridge_pass=$(echo ${bridge_out} | awk 'NF>1{print $NF}')
+muttfile="$XDG_CONFIG_HOME/mutt/protonmail.rc"
+:>"${muttfile}"
+echo "set folder=\"imap://${1}:${bridge_pass}@127.0.0.1:1143\"" >>${muttfile}
+echo "set smtp_url=\"smtp://${1}:${bridge_pass}@127.0.0.1:1025\"" >>${muttfile}
+echo "set spoolfile=\"+INBOX\"" >>${muttfile}
+echo "set realname=\"${2}\"" >>${muttfile}
+echo "set from=\"${3}\"" >>${muttfile}
+hydroxide smtp &
+hydroxide imap &
+echo "SUCCESS. Ready for mutt login."
+read
+mutt -F ${muttfile}

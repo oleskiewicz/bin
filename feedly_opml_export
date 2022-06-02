@@ -1,0 +1,6 @@
+#!/bin/sh -e
+#
+# feedly_opml_export -- export OPML from Feedly
+
+TOKEN="${1:- }"
+curl -H "Authorization: Bearer $TOKEN" "https://cloud.feedly.com/v3/opml"

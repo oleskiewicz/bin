@@ -1,0 +1,48 @@
+#!/bin/sh -e
+#
+# memoize-invalidate
+
+CACHEDIR="${CACHEDIR:-$XDG_CACHE_HOME/memoize}"
+
+tmp="$(mktemp)"
+trap 'rm $tmp' EXIT
+
+offset="${1:--v-1m}"
+touch -t "$(date "$offset" "+%Y%m%d%H%M")" "$tmp"
+find "$CACHEDIR" -print0 -type f -not -newer "$tmp"| xargs -0 rm
+
+# # TODO: make a more exciting, age + size (+ running time) invalidation:
+# os.chdir(os.path.dirname(sys.argv[0]))
+# files = [f for f in os.listdir("$CACHEDIR")]
+# maxs = 512MB
+# mind = 30
+# maxd = 365
+# for f in files:
+#     stat = os.stat(f)
+#     systime = time.time()
+#     age = datetime.timedelta(seconds = systime - stat.st_mtime).days
+#     maxage = mind + (-maxd + mind) * (stat.st_size / maxs - 1) ** 3
+#     if age >= maxage:
+#         os.remove(f)
+#
+# #    days
+# #     365 |  \
+# #         |   \
+# #         |    \
+# #         |     \
+# #         |      \
+# #         |       \
+# #         |        ..
+# #         |          \
+# #   197.5 | ----------..-------------------------------------------
+# #         |             ..
+# #         |               \
+# #         |                ..
+# #         |                  ...
+# #         |                     ..
+# #         |                       ...
+# #         |                          ....
+# #         |                              ......
+# #      30 |                                    ....................
+# #           0                        256                        512
+# #                                                               MiB

@@ -1,0 +1,44 @@
+.Dd $Mdocdate$
+.Dt MEMOIZE 1
+.Sh NAME
+.Nm memoize
+.Nd cache results of commands
+.Sh SYNOPSIS
+.Nm
+.Ar command...
+.Sh DESCRIPTION
+.Nm
+remembers md5 checksum of stdin, and saves it to
+.Pa $XDG_CACHE_DIR/memoize/HASH1-HASH2
+file, where HASH1 is MD5 hash of
+.Ql $@
+arguments passed to
+.Nm ,
+and HASH2 is MD5 checksum of standard input.
+.Sh FILES
+Directory
+.Pa $XDG_CACHE_DIR/memoize
+must exist before the first run.
+.Sh EXAMPLES
+Let's say there is a long-running process which you need to cache for later usage, i.e.
+converting a photo to black and white version.  You can invoke
+.Nm :
+.Bd -literal
+  $ < photo.jpg memoize convert -colorspace Gray - - > photo_bw.jpg
+.Ed
+.Pp
+This will create a file in 
+.Pa $XDG_CACHE_DIR/memoize ,
+with the content-addressable name.  Each consecutive call of
+.Xr convert 1 ,
+if preceded by
+.Nm ,
+will return contents of that cached file, and avoid running the command at all.
+.Sh CAVEATS
+.Nm
+only recognises commands passed to it, not what they do.  Running it with a program
+which changed but has the same name is going to result in a Bad Time!
+.Sh SEE ALSO
+.Xr md5sum 1
+.Sh AUTHORS
+.An Piotr Oleskiewicz

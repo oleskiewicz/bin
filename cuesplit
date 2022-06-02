@@ -1,0 +1,25 @@
+#!/bin/sh -e
+#
+# cuesplit -- split mp3 to chapters based on cue files
+
+CUE="$(find . -type f -name '*.cue')"
+MP3="$(find . -type f -name '*.mp3')"
+WAV=${MP3%.mp3}.wav
+
+mkdir -p orig
+mv "$MP3" ./orig/
+
+# make lossless
+ffmpeg -i "./orig/$MP3" "./orig/$WAV"
+trap 'rm ./orig/$WAV' EXIT
+
+# split aiff
+cuebreakpoints "$CUE" | sed s/$/0/ | shnsplit -t %n  "./orig/$WAV"
+trap 'rm *.wav' EXIT
+
+# encode back into mp3s
+# xe -a -j0 -s 'ffmpeg -i "${1}" -ar 44100 -ac 2 -b:a 192k "${1%.wav}.mp3"' -- *.wav
+xe -ap -j0 -vvq '%.wav' ffmpeg -y -i {} -ar 44100 -ac 2 -b:a 192k %.mp3 -- *.wav
+
+# tag mp3s
+cuetag.sh -- "$CUE" *.mp3

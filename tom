@@ -5,7 +5,7 @@ w=62
 
 function print_help {
 	echo "$1"
-	echo "usage: ./tom.sh time1 [time2 ... timeN]"
+	echo "usage: $0 time1 [time2 ... timeN]"
 }
 
 function notify {

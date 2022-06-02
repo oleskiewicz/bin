@@ -1,8 +1,23 @@
 #!/bin/sh -e
+#
 # bkp - backup files
+#
+# example cron schedule:
+# 0 17 * * * bkp /Volumes/Backup/piotr
+# 0 18 * * 5 bkp backup:
 
-rclone \
-	--progress \
-	--fast-list \
-	--skip-links \
-	sync "$HOME/$1" "${2:-backup}:/$1"
+# src="$1"
+# dest="$2"
+# newtime="$(date "+%Y-%m-%d")"
+
+# rsync_opts="-ahP --delete --exclude=$XDG_CONFIG_HOME/rsync/exclude --log-file=$XDG_CACHE_HOME/rsync/$newtime.txt"
+# [ -L "$dest/latest" ] && rsync_opts="$rsync_opts --delete-excluded --link-dest=$dest/latest"
+
+# echo rsync "$rsync_opts" "$src" "$dest/$newtime" &&
+# echo rm -f "$dest/latest" &&
+# echo ln -s "$dest/$newtime" "$dest/latest"
+
+while read -r dir
+do
+	rclone --progress --fast-list --skip-links --exclude-from ~/.config/rclone/exclude sync "$HOME/$dir" "${1:-backup:}/$dir"
+done < ~/.config/rclone/include

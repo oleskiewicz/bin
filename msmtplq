@@ -1,0 +1,10 @@
+#!/bin/sh -e
+#
+# msmtplq -- msmtp list queue
+
+QUEUEDIR="${QUEUEDIR:-${XDG_CACHE_HOME:-${HOME}/.cache}/msmtpqueue}"
+
+for f in $QUEUEDIR/*.mail
+do
+	grep -E -s --colour -h '(^From:|^To:|^Subject:)' "$f"
+done

@@ -1,0 +1,28 @@
+.Dd $Mdocdate$
+.Dt MEMOIZE-INVALIDATE 1
+.Sh NAME
+.Nm memoize-invalidate
+.Nd invalidate cached results.
+.Sh SYNOPSIS
+.Nm
+.Ar [offset]
+.Sh DESCRIPTION
+.Nm
+invalidates cached files stored in
+.Pa $XDG_CACHE_DIR/memoize/
+directory based on their timestamps.  By default, it deletes files older than one month,
+but different offsets can be passed as arguments.
+.Sh EXAMPLES
+Calling
+.Nm :
+.Bd -literal
+  $ memoize-invalidate -v-1m
+.Ed
+.Pp
+would delete all files older than one month from cache directory (this is the same as
+the default behaviour, without any arguments).
+.Sh SEE ALSO
+.Xr date 1
+for list of time offset modifiers.
+.Sh AUTHORS
+.An Piotr Oleskiewicz

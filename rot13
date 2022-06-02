@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# rot13 - cipher
+
+tr 'A-Za-z' 'N-ZA-Mn-za-m'

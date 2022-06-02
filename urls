@@ -1,6 +1,10 @@
 #!/bin/sh -e
+#
+# urls
+
 [ ! -t 0 ] && in=$(cat); in="${in:-$1}"
 
 echo "$in" |
 	grep -Eo "(finger|ftp|http|https|news|telnet)://[^ >]*|www\\.[-.a-z0-9]+\\.[a-z][a-z][a-z]?([-_./~a-z0-9]+)?" |
+	sort |
 	uniq

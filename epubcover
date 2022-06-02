@@ -1,0 +1,27 @@
+#!/bin/sh -e
+#
+# epubcover -- extract cover from epub
+
+EPUB_FILE="$1"
+COVER_FILE_IN="$(unzip -p "$EPUB_FILE" '*.opf' |
+  xml2tsv |
+  grep -e 'jpg' -e 'png' -e 'jpeg' |
+  grep 'cover' |
+  grep 'href' |
+  head -1 |
+  tr '\t' '\n' |
+  grep '^href' |
+  head -1 |
+  cut -d= -f2)"
+COVER_FILE_OUT="$(dirname "$EPUB_FILE")/$(basename "$EPUB_FILE" .epub).jpg"
+
+try_extract() {
+  unzip -p "$EPUB_FILE" "$1" > "$COVER_FILE_OUT" 2>/dev/null
+}
+
+try_extract "$COVER_FILE_IN" ||
+  try_extract "OPS/$COVER_FILE_IN" ||
+  try_extract "ops/$COVER_FILE_IN" ||
+  try_extract "OEBPS/$COVER_FILE_IN" ||
+  try_extract "oebps/$COVER_FILE_IN" ||
+  rm "$COVER_FILE_OUT"

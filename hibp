@@ -1,7 +1,10 @@
-#!/bin/sh
+#!/bin/sh -e
+#
+# hibp -- check if password has been hacked
 
-if [ -z "$1" ]; then
-	echo "usage: hibp \$password"
+if [ -z "$1" ]
+then
+	echo "usage: hibp password"
 	exit 1
 fi
 
@@ -25,7 +28,8 @@ _pwdcheck=$(
 	head -1
 )
 
-if [ -n "${_pwdcheck}" ]; then
+if [ -n "${_pwdcheck}" ]
+then
 	echo "${_pwdcheck}" | cut -f2 -d':'
 	exit 1
 else

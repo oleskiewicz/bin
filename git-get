@@ -1,8 +1,8 @@
 #!/bin/sh -e
 #
-# git-get - a minimal copy of "go get"
+# git-get -- "go get" for all git repos
 
-_err() {
+die() {
 	printf "%s: %s\n" "$0" "$@"
 	exit 1
 }
@@ -13,14 +13,14 @@ case "$1" in
 	git://*) repo=${1#git://*}; ;;
 	ssh://*) repo=${1#ssh://*@}; ;;
 	https://*) repo=${1#https://*}; ;;
-	*/*) _err 'incorrect url'; ;;
+	*/*) die "incorrect url"; ;;
 esac
 
 repo=${repo%*.git}
 path="$GIT_PATH/$repo"
 
-[ -z "$path" ] && _err 'failed to get repository path'
-[ -e "$path" ] && _err 'repository already exists'
+[ -z "$path" ] && die "failed to get repository path"
+[ -e "$path" ] && die "repository already exists"
 
 mkdir -p "$(dirname "$path")" &&
 (

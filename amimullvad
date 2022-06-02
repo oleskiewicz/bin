@@ -1,0 +1,12 @@
+#!/bin/sh -e
+#
+# am i mullvad
+
+status="$(mullvad status | cut -d: -f2 | tr -d '[:space:]')"
+
+if [ "$status" = "Connected" ]
+then
+	exit 0
+else
+	exit 1
+fi

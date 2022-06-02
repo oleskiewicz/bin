@@ -1,7 +1,8 @@
 #!/bin/sh -e
 #
-# doi2bib - downloads bibtex citation from a DOI provider
-# requires curl
+# doi2bib - downloads bibtex citation from a DOI provider, given DOI URL
 
-curl -Ls -H "Accept: application/x-bibtex" "$1" # or
-# curl -s "http://api.crossref.org/works/$1/transform/application/x-bibtex" -w "\\n"
+bib="$(curl -Ls -H "Accept: application/x-bibtex" "doi.org/$1")"
+
+echo "$bib" | head -n +1 | tr '[:upper:]' '[:lower:]' | tr -d '_'
+echo "$bib" | tail -n +2

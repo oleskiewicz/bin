@@ -1,0 +1,17 @@
+#!/bin/sh -e
+#
+# wttr -- download and cache weather
+
+TODAY="$(date +%Y%m%d)"
+LOCATION="Cambridge_UK"
+WTTR_CACHE_DIR="${WTTR_CACHE_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/wttr}"
+
+mkdir -p "$WTTR_CACHE_DIR"
+
+if [ -f "$WTTR_CACHE_DIR/$TODAY" ]
+then
+	cat "$WTTR_CACHE_DIR/$TODAY" 
+else
+	curl -s "wttr.in/${LOCATION}?T" | tee "$WTTR_CACHE_DIR/$TODAY" 
+fi
+	

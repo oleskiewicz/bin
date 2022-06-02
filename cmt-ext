@@ -1,0 +1,17 @@
+#!/usr/bin/env -S awk -f
+
+# /^EXT / {
+# 	print $2,$3
+# }
+
+{
+	if($1 == EXT) {
+		printf "%s %%s %s\n", $2, $3
+	}
+}
+
+END {
+	if(EXT == "") {
+		print "#"
+	}
+}

@@ -1,3 +1,11 @@
-#!/bin/sh
+#!/bin/sh -e
+#
+# mirror: mirror webpage
+#     -m, --mirror
+#     -k, --convert-links
+#     -E, --adjust-extension
+#     -p, --page-requisites
+#     -q, --quiet
+#     -np, --no-parent
 
-[ -n "$1" ] && wget -mkEpnp "$1"
+[ -n "$1" ] && wget -mkEpqnp --show-progress "$1"

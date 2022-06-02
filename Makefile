@@ -1,6 +1,6 @@
-PREFIX = /usr/local
-BIN    = $(shell find . -type f -perm 755 -not -path '*/\.*')
-MAN    = $(BIN:=.1.gz)
+PREFIX?=/usr/local
+BIN = $(shell find . -type f -perm 755 -not -path '*/\.*')
+MAN = $(shell find . -type f -name '*.[0-9]')
 
 install:
 	install -d $(PREFIX)/bin
@@ -11,10 +11,3 @@ install:
 uninstall:
 	cd $(PREFIX)/bin && rm -f $(BIN)
 	cd $(PREFIX)/share/man/man1 && rm -f $(MAN)
-
-clean:
-	rm -f $(MAN)
-
-.SUFFIXES: .1 .1.gz
-.1.1.gz:
-	gzip -9 $<

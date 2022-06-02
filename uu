@@ -1,0 +1,9 @@
+#!/usr/bin/env -S awk -f
+#
+# uu -- keep unique preserving order
+
+{
+	if(a[$0]==0) {
+		print($0); a[$0]=1;
+	}
+}

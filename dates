@@ -1,0 +1,10 @@
+#!/bin/sh -e
+#
+# dates: dates at different timezones
+
+timezones="US/Alaska EST BST Europe/Warsaw"
+
+for tz in $timezones
+do
+	TZ="$tz" date
+done

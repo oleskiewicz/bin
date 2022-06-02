@@ -1,7 +1,7 @@
 #!/bin/sh -e
 #
-# dr - run inside a given Docker container
-#   command-line: dr python:3 julia
+# cr - run inside a container
+#   command-line: cr python:3 python
 #   shebang: env -S dr python:3 python
 
 docker run -i -t --rm                \

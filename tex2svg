@@ -1,14 +1,16 @@
 #!/bin/sh -e
 [ ! -t 0 ] && eq=$(cat); eq="${eq:-$1}"
 
-tmpdir="/tmp/tex2svg_cache"
-mkdir -p "${tmpdir}"
-eqhash=$(md5 -q -s "${eq}")
-texfile="${tmpdir}/${eqhash}.tex"
-dvifile="${tmpdir}/${eqhash}.dvi"
-svgfile="${tmpdir}/${eqhash}.svg"
+tmpdir="$(mktemp -d)"
+mkdir -p "$tmpdir"
+trap 'rm -r "$tmpdir"' EXIT
 
-if [ -z "$eq" ]; then
+texfile="${tmpdir}/0.tex"
+dvifile="${tmpdir}/0.dvi"
+svgfile="${tmpdir}/0.svg"
+
+if [ -z "$eq" ]
+then
 	cat <<EOF
 usage:
 	tex2svg "a+b=c"
@@ -17,10 +19,7 @@ EOF
 	exit 1
 fi
 
-if [ ! -f "${svgfile}" ]; then
-	if [ ! -f "${dvifile}" ]; then
-		if [ ! -f "${texfile}" ]; then
-			cat <<EOF > "${texfile}"
+cat <<EOF > "${texfile}"
 \\documentclass[border=1pt,varwidth]{standalone}
 \\usepackage{standalone}
 \\usepackage{amsmath}
@@ -30,11 +29,9 @@ if [ ! -f "${svgfile}" ]; then
 \\(${eq}\\)
 \\end{document}
 EOF
-		fi
-		latex -output-directory="${tmpdir}" "${texfile}" > /dev/null 2>&1 || exit 1
-	fi
-	dvisvgm -v 0 -b2pt -Z1.2 -n -o "${svgfile}" "${dvifile}" > /dev/null 2>&1 || exit 1
-fi
+
+latex -output-directory="${tmpdir}" "${texfile}" > /dev/null 2>&1 || exit 1
+dvisvgm -v 0 -b2pt -Z1.2 -n -o "${svgfile}" "${dvifile}" > /dev/null 2>&1 || exit 1
 cat "${svgfile}"
 
 exit 0

@@ -1,12 +1,22 @@
 #!/bin/sh -e
 #
 # doi2pdf - downloads papers from sci-hub based on DOI number
-# requires curl and HTML-XML-utils
 
-SCIHUB_URL=$(curl -Ls -o /dev/null -w '%{url_effective}' "https://whereisscihub.now.sh/go")
-DOI="$1" # or DOI=${1#https://doi.org/*}
+die() {
+	echo "$1" 1>&2
+	exit 1
+}
+
+SCIHUB_URL="https://sci-hub.st/"
+DOI="$1"
 PDF_URL=$(curl -Ls "${SCIHUB_URL}/${DOI}" |
 	hxnormalize -x |
 	hxselect -i -c "iframe::attr(src)"
 )
-echo "$PDF_URL"
+
+key="$(curl -Ls -H "Accept: application/x-bibtex" "doi.org/$1" |
+	head -n +1 | cut -d'{' -f2 | tr '[:upper:]' '[:lower:]' | tr -d '_,'
+)"
+
+curl -Ls "$PDF_URL" -o "${key}.pdf" || die "download failed."
+echo "${key}.pdf"

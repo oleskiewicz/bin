@@ -1,0 +1,7 @@
+#!/bin/sh -e
+#
+# gpg-recover
+
+[ -f "$1".pub ] || gpg --export "$1" > "$1".pub
+dmtxread "$1".sec.*.png | paperkey --input-type=raw --pubring="$1".pub | gpg --import
+rm "$1".pub

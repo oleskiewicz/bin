@@ -1,0 +1,10 @@
+#!/bin/sh -e
+#
+# gpg-backup
+
+gpg --export-secret-key "$1" | paperkey --output-type raw | split -a 1 -b 1500 - "$1".sec.
+for f in "$1".sec.*
+do
+	dmtxwrite -e 8 -f png "$f" > "$f.png"
+	rm "$f"
+done

@@ -1,0 +1,6 @@
+#!/bin/sh -e
+#
+# ssh-recover
+
+dmtxread "$1".pub.txt.*.png > "$1".pub.txt
+dmtxread "$1".sec.txt.*.png > "$1".sec.txt && chmod 400 "$1".sec.txt

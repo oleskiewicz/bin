@@ -1,0 +1,13 @@
+#!/bin/sh -e
+#
+# ssh-backup
+
+cat "$HOME/.ssh/$1" | split -a 1 -b 1500 - "$1".sec.txt.
+cat "$HOME/.ssh/$1.pub" | split -a 1 -b 1500 - "$1".pub.txt.
+
+for f in "$1".*.txt.*
+do
+	dmtxwrite -e 8 -f png "$f" > "$f.png"
+	rm "$f"
+done
+
